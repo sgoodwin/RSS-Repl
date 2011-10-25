@@ -6,6 +6,7 @@ class Item
 	attr_accessor :date
 	attr_accessor :item_id
 	attr_accessor :changed
+	attr_accessor :content
 
 	def self.READ
 		0 # 00000000 in binary
@@ -19,6 +20,7 @@ class Item
 		@unread = true
 		@title = rss_item.title
 		@date = rss_item.date.to_i
+		@content = rss_item.description
 		@item_id = rss_item.guid.content
 		@changed = false
 	end
@@ -36,7 +38,7 @@ class Item
 		end
 	end
 
-	def toggle_stats
+	def toggle_status
 		@unread = !@unread
 		@changed = true
 	end
