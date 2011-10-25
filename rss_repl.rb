@@ -2,10 +2,6 @@ require 'rubygems'
 require 'lib/item'
 require 'lib/subscription'
 
-@@subscription = Subscription.new("http://feeds2.feedburner.com/lockfocus")
-@@items = @@subscription.items
-puts "found #{@@items.count} items:"
-
 def help
 	puts "p: print item list"
 	puts "n: toggle read/unread on item n"
@@ -17,23 +13,26 @@ def help
 end
 
 def print_item_list
-	@@items.each_index do |i|
-		item = @@items[i]
-		puts "#{i+1}: (#{item.status}) #{item.title} @#{item.date}"
+	@@items.values.each_index do |i|
+		item = @@items.values[i]
+		puts "#{i+1}: #{item.to_string}"
 	end
+	puts "#{@@subscription.changed_items.count} unsynced items"
 end
 
 def mark_all_read
-	@@items.each do |item|
+	@@items.values.each do |item|
 		item.unread = false
+		item.changed = true
 	end
 	
 	print_item_list
 end
 
 def mark_all_unread
-	@@items.each do |item|
+	@@items.values.each do |item|
 		item.unread = true
+		item.changed = true
 	end
 	
 	print_item_list
@@ -42,8 +41,8 @@ end
 def try_to_toggle_item_number(number)
 	integer = (number.to_i)-1
 	if(integer >= 0)
-		item = @@items[integer]
-		item.unread = !item.unread
+		item = @@items.values[integer]
+		item.toggle_stats
 		print_item_list
 	else
 		print_item_list
@@ -54,6 +53,11 @@ def sync
 	puts "syncing..."
 	@@subscription.sync
 end
+
+@@subscription = Subscription.new("http://feeds2.feedburner.com/lockfocus")
+@@items = @@subscription.items
+puts "found #{@@items.count} items:"
+sync
 
 while(1) do
 	a = gets.chomp
