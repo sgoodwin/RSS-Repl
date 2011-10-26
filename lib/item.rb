@@ -1,4 +1,5 @@
 require 'json/pure'
+require 'CGI'
 
 class Item	
 	attr_accessor :title
@@ -39,6 +40,9 @@ class Item
 	end
 
 	def toggle_status
+		if(@unread)
+			puts CGI.unescapeElement(self.content).gsub('&#8211;','-').gsub('&#8216;', '\'').gsub('&#8217;', '\'')
+		end
 		@unread = !@unread
 		@changed = true
 	end

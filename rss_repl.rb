@@ -40,10 +40,12 @@ end
 
 def try_to_toggle_item_number(number)
 	integer = (number.to_i)-1
-	if(integer >= 0)
+	if(integer >= 0 && integer < @@items.values.length)
 		item = @@items.values[integer]
-		item.toggle_stats
-		print_item_list
+		item.toggle_status
+		if(item.unread)
+			print_item_list
+		end
 	else
 		print_item_list
 	end
